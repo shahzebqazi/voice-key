@@ -5,7 +5,7 @@
 Voice Hotkey is a Linux desktop application that captures voice input via a configurable keyboard shortcut and transcribes it to text using OpenAI Whisper.
 
 **Live site:** [https://sqazi.sh/voice-key/](https://sqazi.sh/voice-key/)  
-**Repository:** [github.com/sqazi/voice-key](https://github.com/sqazi/voice-key)
+**Repository:** [github.com/shahzebqazi/voice-key](https://github.com/shahzebqazi/voice-key)
 
 ---
 
@@ -91,3 +91,4 @@ See `app/config.example.toml` for the full schema. Config respects `$XDG_CONFIG_
 2. Whisper transcribes captured audio with reasonable accuracy
 3. Transcribed text appears in system clipboard within 5 seconds of stopping
 4. Application runs as a background daemon without GUI
+5. GitHub Pages shell uses a fixed black background with viewport controls only

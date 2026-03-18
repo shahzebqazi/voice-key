@@ -46,7 +46,7 @@ Apply these when editing **`index.html`**, **`styles/backgrounds.css`**, **`mock
 
 - Keep **visual hierarchy** clear.
 - Maintain **consistent spacing**, **border-radius**, and **typography** with existing patterns.
-- **Contrast**: ensure readability on Blueprint, Paper, and Dark Dots themes.
+- **Contrast**: ensure readability against the fixed black GitHub Pages shell.
 - **Accessibility**: preserve `aria-label`, focus styles, semantic HTML.
 
 ---

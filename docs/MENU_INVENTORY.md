@@ -8,7 +8,7 @@ Shell sections and mockup inventory for the GitHub Pages site.
 
 | Section | Disclosure ID | Content |
 |---------|--------------|---------|
-| UI configuration | `disclosure-ui` | Theme switcher (Blueprint, Paper, Dark Dots), viewport size (Phone, Desktop) |
+| Viewport | `disclosure-viewport` | Viewport size controls (Phone, Desktop) |
 | Mockups | `disclosure-mockups` | Settings, Recording Flow, Future Features |
 | Documents | `disclosure-docs` | Executive overview, Software requirements, Design guide |
 
@@ -31,16 +31,6 @@ Shell sections and mockup inventory for the GitHub Pages site.
 | Executive overview | `documents/executive-overview.html` | Leadership, sponsors |
 | Software requirements | `documents/software-requirements.html` | Engineering leadership |
 | Design guide | `documents/design-guide.html` | Product, design, engineering |
-
----
-
-## Theme buttons
-
-| Theme | CSS class | Description |
-|-------|-----------|-------------|
-| Blueprint | `bg-blueprint` | Blue engineering grid |
-| Paper | `bg-paper` | Warm paper with fine grid |
-| Dark Dots | `bg-dark-dots` | Near-black with dot pattern |
 
 ---
 
