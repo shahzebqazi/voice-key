@@ -26,6 +26,9 @@ h1 {
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--border);
 }
+.doc-footer {
+  border-bottom: none;
+}
 h2 {
   font-size: 1.15rem;
   margin-top: 1.75rem;
@@ -34,12 +37,23 @@ h3 {
   font-size: 1rem;
   margin-top: 1.25rem;
 }
+p {
+  margin: 0.5rem 0;
+}
 ul,
 ol {
   padding-left: 1.25rem;
 }
+li + li {
+  margin-top: 0.3rem;
+}
 a {
   color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.15em;
+}
+a:hover {
+  color: #0d3561;
 }
 .back {
   display: inline-block;
@@ -52,6 +66,7 @@ a {
   padding: 0.75rem 1rem;
   margin: 1rem 0;
   font-size: 0.95rem;
+  border-radius: 0 6px 6px 0;
 }
 table {
   width: 100%;
@@ -67,10 +82,32 @@ td {
 }
 th {
   background: var(--callout);
+  font-weight: 600;
+}
+tr:hover td {
+  background: #fafbfc;
 }
 code {
   background: #f0f0f0;
   padding: 0.15em 0.35em;
   border-radius: 3px;
   font-size: 0.88em;
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 1.25rem 1rem 3rem;
+  }
+  table {
+    font-size: 0.8rem;
+  }
+  th, td {
+    padding: 0.4rem 0.5rem;
+  }
+}
+
+@media print {
+  body { max-width: none; padding: 0; }
+  .back { display: none; }
+  a { color: var(--fg); text-decoration: underline; }
 }
