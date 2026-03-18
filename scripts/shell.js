@@ -1,5 +1,5 @@
 /**
- * Shell behavior for voice-key index.html: theme, disclosures, mockup iframes.
+ * Shell behavior for voice-key index.html: disclosures, viewport sizing, and mockup iframes.
  * Adapted from vst-ui shell.js.
  */
 (function () {
@@ -9,16 +9,12 @@
   var rightPanel = document.getElementById("right-panel");
   var phoneFrame = document.getElementById("phone-frame");
   var iframe = document.getElementById("mockup-iframe");
-  var themeButtons = document.querySelectorAll("[data-theme]");
   var sizeButtons = document.querySelectorAll("[data-mockup-size]");
   var mockupLinks = document.querySelectorAll(".mockup-link");
   var disclosures = document.querySelectorAll(".nav-disclosure");
   var disclosureMockups = document.getElementById("disclosure-mockups");
   var overview = document.getElementById("shell-overview");
   var mockupFrameClose = document.getElementById("mockup-frame-close");
-  var THEME_STORAGE_KEY = "voice-key-wallpaper";
-  var THEME_CLASSES = ["bg-blueprint", "bg-paper", "bg-dark-dots"];
-
   var MOCKUP_SIZES = {
     phone: { className: "phone-frame--phone" },
     desktop: { className: "phone-frame--desktop" },
@@ -106,22 +102,6 @@
     });
   }
 
-  function restoreThemeFromStorage() {
-    var saved = localStorage.getItem(THEME_STORAGE_KEY);
-    document.body.classList.remove("bg-blueprint", "bg-paper", "bg-dark-dots");
-    if (saved && THEME_CLASSES.indexOf(saved) !== -1) {
-      document.body.classList.add(saved);
-    } else {
-      document.body.classList.add("bg-blueprint");
-    }
-    themeButtons.forEach(function (b) {
-      var t = b.getAttribute("data-theme");
-      var on = document.body.classList.contains(t);
-      b.classList.toggle("is-active", on);
-      b.setAttribute("aria-pressed", on ? "true" : "false");
-    });
-  }
-
   disclosures.forEach(function (d) {
     d.addEventListener("toggle", function () {
       syncOverviewVisibility();
@@ -141,19 +121,6 @@
     mockupFrameClose.addEventListener("click", function () { clearMockup(); });
   }
 
-  themeButtons.forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      var theme = btn.getAttribute("data-theme");
-      document.body.classList.remove("bg-blueprint", "bg-paper", "bg-dark-dots");
-      document.body.classList.add(theme);
-      try { localStorage.setItem(THEME_STORAGE_KEY, theme); } catch (e) {}
-      themeButtons.forEach(function (b) {
-        b.classList.toggle("is-active", b === btn);
-        b.setAttribute("aria-pressed", b === btn ? "true" : "false");
-      });
-    });
-  });
-
   sizeButtons.forEach(function (btn) {
     btn.addEventListener("click", function () {
       applyMockupSize(btn.getAttribute("data-mockup-size"));
@@ -171,7 +138,6 @@
     });
   });
 
-  restoreThemeFromStorage();
   syncOverviewVisibility();
   syncNavDensity();
   var sizeKey = window.matchMedia("(max-width: 767px)").matches ? "phone" : "desktop";

@@ -7,7 +7,7 @@
     <title>Voice Hotkey — Design &amp; Documentation</title>
     <link rel="stylesheet" href="styles/backgrounds.css" />
   </head>
-  <body class="bg-blueprint">
+  <body>
     <main
       class="app-shell app-shell--intro"
       id="app-shell"
@@ -36,58 +36,19 @@
 
         <div class="shell-overview" id="shell-overview">
           <p>
-            Use the sections below to switch the workspace theme, preview UI mockups in the
-            viewport, or open formal design and engineering documents. Everything here supports
-            the voice-hotkey desktop application.
+            Use the sections below to preview UI mockups in the viewport or open formal design
+            and engineering documents. Everything here supports the voice-hotkey desktop
+            application.
           </p>
         </div>
 
         <div class="nav-disclosures">
-          <details class="nav-disclosure" id="disclosure-ui">
+          <details class="nav-disclosure" id="disclosure-viewport">
             <summary class="nav-disclosure__summary">
               <span class="nav-disclosure__chevron" aria-hidden="true"></span>
-              UI configuration
+              Viewport
             </summary>
             <div class="nav-disclosure__body">
-              <div class="stack-list" role="group" aria-label="Background themes">
-                <button
-                  type="button"
-                  class="stack-tile"
-                  data-theme="bg-blueprint"
-                  aria-pressed="true"
-                >
-                  <span class="stack-tile__glyph" aria-hidden="true">&#xf00a;</span>
-                  <span class="stack-tile__copy">
-                    <span class="stack-tile__title">Blueprint</span>
-                    <span class="stack-tile__desc"
-                      >Blue engineering grid—clear, high-contrast review backdrop.</span
-                    >
-                  </span>
-                </button>
-                <button type="button" class="stack-tile" data-theme="bg-paper" aria-pressed="false">
-                  <span class="stack-tile__glyph" aria-hidden="true">&#xf15c;</span>
-                  <span class="stack-tile__copy">
-                    <span class="stack-tile__title">Paper</span>
-                    <span class="stack-tile__desc"
-                      >Warm paper tone with fine grid—sketch and spec vibe.</span
-                    >
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  class="stack-tile"
-                  data-theme="bg-dark-dots"
-                  aria-pressed="false"
-                >
-                  <span class="stack-tile__glyph" aria-hidden="true">&#xf186;</span>
-                  <span class="stack-tile__copy">
-                    <span class="stack-tile__title">Dark Dots</span>
-                    <span class="stack-tile__desc"
-                      >Near-black field with dots—low-glare, studio-style context.</span
-                    >
-                  </span>
-                </button>
-              </div>
               <div class="stack-list stack-list--tight" role="group" aria-label="Viewport size">
                 <button
                   type="button"
