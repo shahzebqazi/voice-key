@@ -1,5 +1,6 @@
 [hotkey]
-key = "Key.ctrl_r"
+# Common evdev key names: KEY_RIGHTALT, KEY_LEFTALT, KEY_RIGHTCTRL, KEY_LEFTCTRL, KEY_CAPSLOCK, KEY_SPACE
+key = "KEY_RIGHTALT"
 double_click_ms = 400
 
 [recording]

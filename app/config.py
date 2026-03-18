@@ -17,7 +17,7 @@ CONFIG_DIR = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")) / 
 CONFIG_PATH = CONFIG_DIR / "config.toml"
 
 DEFAULTS = {
-    "hotkey": {"key": "Key.ctrl_r", "double_click_ms": 400},
+    "hotkey": {"key": "KEY_RIGHTALT", "double_click_ms": 400},
     "recording": {"sample_rate": 16000, "timeout_seconds": 30},
     "whisper": {"model": "base", "language": "en"},
     "output": {"target": "clipboard"},
@@ -26,7 +26,7 @@ DEFAULTS = {
 
 @dataclass
 class HotkeyConfig:
-    key: str = "Key.ctrl_r"
+    key: str = "KEY_RIGHTALT"
     double_click_ms: int = 400
 
 

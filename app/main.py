@@ -1,5 +1,6 @@
 """Voice Hotkey — main entry point."""
 
+import signal
 import sys
 import threading
 
@@ -8,6 +9,10 @@ from .hotkey import DoubleTapListener
 from .recorder import Recorder
 from .transcriber import Transcriber
 from .clipboard import copy_to_clipboard
+
+
+def _raise_keyboard_interrupt(signum, frame):
+    raise KeyboardInterrupt
 
 
 class VoiceHotkey:
@@ -53,18 +58,22 @@ class VoiceHotkey:
     def run(self):
         key = self.cfg.hotkey.key
         interval = self.cfg.hotkey.double_click_ms
-        print(f"[voice-hotkey] Listening for double-tap on {key} (within {interval}ms)")
-        print("[voice-hotkey] Press Ctrl+C to quit.")
+        signal.signal(signal.SIGINT, _raise_keyboard_interrupt)
 
         listener = DoubleTapListener(key, interval, self._on_activate)
-        listener.start()
-
         try:
+            listener.start()
+            print(f"[voice-hotkey] Listening for double-tap on {key} (within {interval}ms)")
+            print("[voice-hotkey] Press Ctrl+C to quit.")
             listener.join()
+        except (RuntimeError, ValueError) as exc:
+            print(str(exc), file=sys.stderr)
+            sys.exit(1)
         except KeyboardInterrupt:
             print("\n[voice-hotkey] Shutting down.")
+        finally:
             listener.stop()
-            sys.exit(0)
+            listener.join(timeout=1.0)
 
 
 def main():
