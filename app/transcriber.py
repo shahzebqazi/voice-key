@@ -1,7 +1,7 @@
 """Whisper transcription wrapper."""
 
-import whisper
 import numpy as np
+import whisper
 
 
 class Transcriber:
@@ -28,6 +28,7 @@ class Transcriber:
         opts = {}
         if self.language and self.language != "auto":
             opts["language"] = self.language
+        opts["fp16"] = False
 
         result = self._model.transcribe(audio_f32, **opts)
         return result.get("text", "").strip()

@@ -13,6 +13,10 @@ INPUT_ACCESS_ERROR = """[voice-hotkey] No keyboard devices found.
 [voice-hotkey] Run with sudo, for example:
 [voice-hotkey]   sudo python -u -m app.main
 [voice-hotkey] Or add yourself to the input group and log back in."""
+WOOTING_REQUIRED_ERROR = """[voice-hotkey] No Wooting keyboard found.
+[voice-hotkey] This build is configured to listen only to Wooting devices.
+[voice-hotkey] Connect the Wooting keyboard and restart the app."""
+PREFERRED_KEYBOARD_HINTS = ("wooting",)
 
 
 def code_name(code: int) -> str:
@@ -22,7 +26,38 @@ def code_name(code: int) -> str:
     return name or f"KEY_{code}"
 
 
-def find_keyboards() -> list[evdev.InputDevice]:
+def device_label(dev: evdev.InputDevice) -> str:
+    return f"{dev.name} ({dev.path})"
+
+
+def _is_keyboard_device(key_codes: set[int]) -> bool:
+    modifiers = {
+        ecodes.KEY_LEFTCTRL,
+        ecodes.KEY_RIGHTCTRL,
+        ecodes.KEY_LEFTSHIFT,
+        ecodes.KEY_RIGHTSHIFT,
+        ecodes.KEY_LEFTALT,
+        ecodes.KEY_RIGHTALT,
+        ecodes.KEY_LEFTMETA,
+        ecodes.KEY_RIGHTMETA,
+    }
+    alpha = (
+        set(range(ecodes.KEY_Q, ecodes.KEY_P + 1))
+        | set(range(ecodes.KEY_A, ecodes.KEY_L + 1))
+        | set(range(ecodes.KEY_Z, ecodes.KEY_M + 1))
+    )
+    return bool((key_codes & modifiers and key_codes & alpha) or len(key_codes) > 60)
+
+
+def select_wooting_keyboards(keyboards: list[evdev.InputDevice]) -> list[evdev.InputDevice]:
+    return [
+        dev
+        for dev in keyboards
+        if any(hint in (dev.name or "").lower() for hint in PREFERRED_KEYBOARD_HINTS)
+    ]
+
+
+def find_all_keyboards() -> list[evdev.InputDevice]:
     keyboards = []
     for path in evdev.list_devices():
         try:
@@ -36,25 +71,24 @@ def find_keyboards() -> list[evdev.InputDevice]:
             continue
 
         key_codes = set(caps[ecodes.EV_KEY])
-        modifiers = {
-            ecodes.KEY_LEFTCTRL,
-            ecodes.KEY_RIGHTCTRL,
-            ecodes.KEY_LEFTSHIFT,
-            ecodes.KEY_RIGHTSHIFT,
-            ecodes.KEY_LEFTALT,
-            ecodes.KEY_RIGHTALT,
-            ecodes.KEY_LEFTMETA,
-            ecodes.KEY_RIGHTMETA,
-        }
-        alpha = (
-            set(range(ecodes.KEY_Q, ecodes.KEY_P + 1))
-            | set(range(ecodes.KEY_A, ecodes.KEY_L + 1))
-            | set(range(ecodes.KEY_Z, ecodes.KEY_M + 1))
-        )
-        if (key_codes & modifiers and key_codes & alpha) or len(key_codes) > 60:
+        if _is_keyboard_device(key_codes):
             keyboards.append(dev)
         else:
             dev.close()
+    return keyboards
+
+
+def find_keyboards() -> list[evdev.InputDevice]:
+    keyboards = find_all_keyboards()
+    selected = select_wooting_keyboards(keyboards)
+    if selected:
+        for dev in keyboards:
+            if dev not in selected:
+                dev.close()
+        return selected
+
+    # Prefer Wooting when present, but fall back to any accessible keyboard.
+    # This keeps the app usable on laptops and non-Wooting external boards.
     return keyboards
 
 
@@ -169,6 +203,14 @@ class DoubleTapListener:
 
         self._keyboards = self._keyboard_finder()
         if not self._keyboards:
+            all_keyboards = find_all_keyboards()
+            if all_keyboards:
+                available = "\n".join(
+                    f"[voice-hotkey]   - {device_label(dev)}" for dev in all_keyboards
+                )
+                for dev in all_keyboards:
+                    dev.close()
+                raise RuntimeError(f"{WOOTING_REQUIRED_ERROR}\n[voice-hotkey] Available keyboards:\n{available}")
             raise RuntimeError(INPUT_ACCESS_ERROR)
 
         self._stop_event.clear()
@@ -178,6 +220,9 @@ class DoubleTapListener:
         os.set_blocking(self._wakeup_w, False)
         self._thread = threading.Thread(target=self._run, daemon=True)
         self._thread.start()
+
+    def device_labels(self) -> list[str]:
+        return [device_label(dev) for dev in self._keyboards]
 
     def stop(self):
         self._stop_event.set()

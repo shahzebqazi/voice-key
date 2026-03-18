@@ -1,6 +1,6 @@
 # Voice Hotkey
 
-Linux desktop application that binds a modifier key (default: **Right Control**) as a double-click trigger to **record voice**, **transcribe with OpenAI Whisper**, and **copy the result to your clipboard**.
+Linux desktop application that binds a modifier key (default: **Right Alt**) as a double-click trigger to **record voice**, **transcribe with OpenAI Whisper**, and **copy the result to your clipboard**.
 
 **Live site:** [https://sqazi.sh/voice-key/](https://sqazi.sh/voice-key/)
 
@@ -24,13 +24,16 @@ cp app/config.example.toml ~/.config/voice-hotkey/config.toml
 # Edit config.toml to set your preferred key, Whisper model, timeout, etc.
 
 # 5. Run
-python -m app.main
+sudo --preserve-env=DISPLAY,WAYLAND_DISPLAY,XDG_RUNTIME_DIR,DBUS_SESSION_BUS_ADDRESS,PULSE_SERVER \
+  ./venv/bin/python -u -m app.main
 ```
+
+On Wayland and on systems using external keyboards, the hotkey listener may need `sudo` so it can read `/dev/input/event*`. Preserving the desktop session variables keeps notification sounds, audio, and clipboard access working while the process runs as root.
 
 ## How it works
 
-1. **Double-click Right Control** — starts recording from your default microphone.
-2. **Double-click Right Control again** (or wait for timeout) — stops recording.
+1. **Double-click Right Alt** — starts recording from your default microphone.
+2. **Double-click Right Alt again** (or wait for timeout) — stops recording.
 3. Audio is transcribed locally using OpenAI Whisper.
 4. Transcribed text is copied to your clipboard.
 
@@ -48,7 +51,7 @@ python -m app.main
 
 - **Linux** (X11 or Wayland with XWayland)
 - **Python 3.9+**
-- `xclip` or `xsel` for clipboard (install via your package manager)
+- `xclip`, `xsel`, or `wl-copy` for clipboard (install via your package manager)
 - `ffmpeg` (required by Whisper)
 - PortAudio (`libportaudio2` on Debian/Ubuntu)
 
@@ -66,19 +69,19 @@ Config file: `~/.config/voice-hotkey/config.toml`
 
 ```toml
 [hotkey]
-key = "Key.ctrl_r"          # pynput key name
+key = "KEY_RIGHTALT"        # evdev key name
 double_click_ms = 400       # max interval between clicks
 
 [recording]
 sample_rate = 16000
-timeout_seconds = 30
+timeout_seconds = 10
 
 [whisper]
 model = "base"              # tiny, base, small, medium, large
 language = "en"             # or "auto" for detection
 
 [output]
-target = "clipboard"        # clipboard (only option for MVP)
+target = "clipboard"        # clipboard with terminal OSC 52 fallback when available
 ```
 
 ## Project structure

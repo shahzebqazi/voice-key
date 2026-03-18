@@ -26,6 +26,12 @@ config.toml
 # IDE
 .vscode/
 .idea/
+.gradle/
+.downloads/
+.android-sdk/
+.jdk/
+launcher-android/.gradle/
+launcher-android/local.properties
 
 # OS
 .DS_Store

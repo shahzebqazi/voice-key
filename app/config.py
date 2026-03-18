@@ -18,7 +18,7 @@ CONFIG_PATH = CONFIG_DIR / "config.toml"
 
 DEFAULTS = {
     "hotkey": {"key": "KEY_RIGHTALT", "double_click_ms": 400},
-    "recording": {"sample_rate": 16000, "timeout_seconds": 30},
+    "recording": {"sample_rate": 16000, "timeout_seconds": 10},
     "whisper": {"model": "base", "language": "en"},
     "output": {"target": "clipboard"},
 }
@@ -33,7 +33,7 @@ class HotkeyConfig:
 @dataclass
 class RecordingConfig:
     sample_rate: int = 16000
-    timeout_seconds: int = 30
+    timeout_seconds: int = 10
 
 
 @dataclass

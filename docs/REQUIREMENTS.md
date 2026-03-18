@@ -15,12 +15,12 @@ Voice Hotkey is a Linux desktop application that captures voice input via a conf
 
 | Feature | Description | Priority |
 |---------|-------------|----------|
-| Double-click trigger | Right Control key, double-click within 400 ms | MUST |
+| Double-click trigger | Right Alt key, double-click within 400 ms | MUST |
 | Audio recording | Capture from default microphone at 16 kHz | MUST |
 | Whisper transcription | Local inference using `openai-whisper` (base model) | MUST |
-| Clipboard output | Copy transcribed text via `pyperclip` | MUST |
+| Clipboard output | Copy transcribed text via system clipboard tools, `pyperclip`, or terminal OSC 52 fallback | MUST |
 | Config file | TOML at `~/.config/voice-hotkey/config.toml` | MUST |
-| Timeout | Auto-stop recording after 30 seconds | MUST |
+| Timeout | Auto-stop recording after 10 seconds | MUST |
 
 ### 2.2 Non-goals (MVP)
 
@@ -35,7 +35,7 @@ Voice Hotkey is a Linux desktop application that captures voice input via a conf
 
 | Feature | Description | Phase |
 |---------|-------------|-------|
-| Configurable keys | Right Alt, Super, Fn, Copilot key | 2 |
+| Configurable keys | Super, Fn, Copilot key | 2 |
 | Model selection | Runtime model switching | 2 |
 | Language detection | Auto-detect spoken language | 2 |
 | Text-to-speech | Generate voice from text | 3 |
@@ -60,10 +60,10 @@ Voice Hotkey is a Linux desktop application that captures voice input via a conf
 ## 5. Architecture
 
 ```
-User → [Double-tap key] → pynput listener
+User → [Double-tap key] → evdev listener
   → sounddevice (record audio)
   → openai-whisper (transcribe)
-  → pyperclip (copy to clipboard)
+  → clipboard backends / OSC 52 fallback
 ```
 
 All components run in a single Python process. Recording and transcription use background threads to avoid blocking the key listener.
@@ -75,7 +75,7 @@ All components run in a single Python process. Recording and transcription use b
 - No secrets in repository (API keys in config/env only)
 - Audio recorded to memory, not disk
 - No network access required for local Whisper
-- Requires input device access (`input` group)
+- Requires input device access (`input` group) or a preserved-environment `sudo` launch
 
 ---
 
@@ -87,8 +87,18 @@ See `app/config.example.toml` for the full schema. Config respects `$XDG_CONFIG_
 
 ## 8. Success criteria
 
-1. Double-click Right Control reliably starts/stops recording
+1. Double-click Right Alt reliably starts/stops recording
 2. Whisper transcribes captured audio with reasonable accuracy
 3. Transcribed text appears in system clipboard within 5 seconds of stopping
 4. Application runs as a background daemon without GUI
 5. GitHub Pages shell uses a fixed black background with a horizontal expanding file-structure header
+
+## 9. Launch guidance
+
+Recommended launch command on Wayland and external-keyboard setups:
+
+```bash
+cd ~/voice-key && sudo --preserve-env=DISPLAY,WAYLAND_DISPLAY,XDG_RUNTIME_DIR,DBUS_SESSION_BUS_ADDRESS,PULSE_SERVER ~/voice-key/venv/bin/python -u -m app.main
+```
+
+This preserves the desktop session environment while giving the app access to `/dev/input/event*`, which is required for reliable Right Alt detection on devices such as Wooting keyboards.
