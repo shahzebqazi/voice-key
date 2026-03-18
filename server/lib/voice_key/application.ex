@@ -4,9 +4,12 @@ defmodule VoiceKey.Application do
   @moduledoc false
 
   use Application
+  require Logger
 
   @impl true
   def start(_type, _args) do
+    Logger.info("[voice_key] starting Phoenix server with verbose patch logging enabled")
+
     children = [
       VoiceKeyWeb.Telemetry,
       {DNSCluster, query: Application.get_env(:voice_key, :dns_cluster_query) || :ignore},
@@ -20,6 +23,7 @@ defmodule VoiceKey.Application do
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: VoiceKey.Supervisor]
+    Logger.debug("[voice_key] supervisor strategy=#{opts[:strategy]} children=#{length(children)}")
     Supervisor.start_link(children, opts)
   end
 
@@ -27,6 +31,10 @@ defmodule VoiceKey.Application do
   # whenever the application is updated.
   @impl true
   def config_change(changed, _new, removed) do
+    Logger.info(
+      "[voice_key] config change received changed_keys=#{map_size(changed)} removed_keys=#{length(removed)}"
+    )
+
     VoiceKeyWeb.Endpoint.config_change(changed, removed)
     :ok
   end

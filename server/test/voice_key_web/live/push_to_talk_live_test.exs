@@ -9,6 +9,7 @@ defmodule VoiceKeyWeb.PushToTalkLiveTest do
       assert html =~ "Voice Key"
       assert html =~ "push-to-talk-btn"
       assert html =~ "transcript"
+      assert html =~ "transcript-text"
     end
 
     test "page has mobile viewport meta tag", %{conn: conn} do
