@@ -30,6 +30,12 @@ sudo --preserve-env=DISPLAY,WAYLAND_DISPLAY,XDG_RUNTIME_DIR,DBUS_SESSION_BUS_ADD
 
 On Wayland and on systems using external keyboards, the hotkey listener may need `sudo` so it can read `/dev/input/event*`. Preserving the desktop session variables keeps notification sounds, audio, and clipboard access working while the process runs as root.
 
+## Future features
+
+- Add a menubar option, enabled by default, to run local autocorrect on transcribed voice prompts.
+- Bundle a small local LLM for that autocorrect flow.
+- Keep that LLM limited to the user's voice data locally, with no remote exposure and no use outside local voice processing.
+
 ## How it works
 
 1. **Double-click Right Alt** — starts recording from your default microphone.

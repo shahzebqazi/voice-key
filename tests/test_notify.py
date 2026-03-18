@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock, patch
 
-from app.notify import FREEDESKTOP_MESSAGE_SOUND, NotificationSound
+from app.notify import FREEDESKTOP_MESSAGE_SOUND, NotificationSound, send_desktop_notification
 
 
 def test_prefers_canberra_when_available():
@@ -38,3 +38,17 @@ def test_play_async_dispatches_background_thread():
 
     thread_cls.assert_called_once()
     thread.start.assert_called_once()
+
+
+def test_send_desktop_notification_uses_notify_send():
+    run = MagicMock()
+
+    sent = send_desktop_notification(
+        "Voice Key",
+        "Copied to clipboard.",
+        which=lambda name: "/usr/bin/notify-send" if name == "notify-send" else None,
+        run=run,
+    )
+
+    assert sent is True
+    run.assert_called_once()

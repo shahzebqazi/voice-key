@@ -3,14 +3,22 @@
 import signal
 import sys
 import threading
+import traceback
 
-from .clipboard import copy_to_clipboard
+from .autocorrect import autocorrect_transcript
+from .clipboard import deliver_transcript
 from .config import load_config
 from .hotkey import DoubleTapListener
-from .notify import NotificationSound
+from .notify import NotificationSound, send_desktop_notification_async
 from .recorder import Recorder
-from .runtime_state import clear_status, write_status
-from .transcript_log import TRANSCRIPT_LOG_PATH, append_transcript
+from .runtime_state import clear_recent_prompts, clear_status, write_status
+from .transcript_log import (
+    TRANSCRIPT_LOG_PATH,
+    append_transcript,
+    clear_transcript_log,
+    compute_audio_hash,
+    load_latest_transcript_text,
+)
 from .transcriber import Transcriber
 
 
@@ -20,6 +28,8 @@ def _raise_keyboard_interrupt(signum, frame):
 
 class VoiceHotkey:
     def __init__(self):
+        clear_transcript_log()
+        clear_recent_prompts()
         write_status("starting")
         self.cfg = load_config()
         self.recorder = Recorder(
@@ -35,25 +45,84 @@ class VoiceHotkey:
         write_status("idle", hotkey=self.cfg.hotkey.key)
 
     def _on_recording_complete(self, audio):
-        write_status("processing", hotkey=self.cfg.hotkey.key)
         if audio is None or len(audio) == 0:
             print("[voice-hotkey] No audio captured.")
             write_status("idle", hotkey=self.cfg.hotkey.key)
             return
 
         duration = len(audio) / self.cfg.recording.sample_rate
-        print(f"[voice-hotkey] Transcribing {duration:.1f}s of audio...")
+        write_status("processing", hotkey=self.cfg.hotkey.key)
 
-        text = self.transcriber.transcribe(audio, self.cfg.recording.sample_rate)
-        if text:
-            log_path = append_transcript(text, duration)
-            print(f"[voice-hotkey] Logged transcript to {log_path}")
-            if copy_to_clipboard(text):
-                print(f"[voice-hotkey] Copied to clipboard: {text}")
+        try:
+            audio_hash = compute_audio_hash(audio, self.cfg.recording.sample_rate)
+            current_cfg = load_config()
+            print(f"[voice-hotkey] Transcribing {duration:.1f}s of audio...")
+            raw_text = self.transcriber.transcribe(
+                audio,
+                self.cfg.recording.sample_rate,
+                audio_hash=audio_hash,
+            )
+            text = raw_text
+            if raw_text and current_cfg.autocorrect.enabled:
+                text = autocorrect_transcript(
+                    raw_text,
+                    markdown_support=current_cfg.autocorrect.markdown_support,
+                )
+                if text != raw_text:
+                    print("[voice-hotkey] Applied local autocorrect to transcript.")
+
+            if text:
+                log_path = append_transcript(
+                    text,
+                    duration,
+                    audio=audio,
+                    sample_rate=self.cfg.recording.sample_rate,
+                    audio_hash=audio_hash,
+                    raw_text=raw_text,
+                )
+                print(f"[voice-hotkey] Logged transcript to {log_path}")
+                clipboard_text = load_latest_transcript_text() or text
+                copied, pasted = deliver_transcript(clipboard_text, paste=True)
+                if copied:
+                    print(f"[voice-hotkey] Copied to clipboard: {clipboard_text}")
+                    if pasted:
+                        print("[voice-hotkey] Pasted transcript into the focused app.")
+                        send_desktop_notification_async(
+                            "Voice Key",
+                            "Transcription copied and pasted into the focused app.",
+                        )
+                    else:
+                        print("[voice-hotkey] Transcript copied, but paste did not complete.")
+                        send_desktop_notification_async(
+                            "Voice Key",
+                            "Copied to clipboard, but automatic paste failed.",
+                            urgency="normal",
+                        )
+                else:
+                    print(f"[voice-hotkey] Clipboard unavailable. Transcript: {text}")
+                    send_desktop_notification_async(
+                        "Voice Key",
+                        "Transcription succeeded, but copying to the clipboard failed.",
+                        urgency="critical",
+                    )
             else:
-                print(f"[voice-hotkey] Clipboard unavailable. Transcript: {text}")
-        else:
-            print("[voice-hotkey] No speech detected.")
+                print("[voice-hotkey] No speech detected.")
+                send_desktop_notification_async(
+                    "Voice Key",
+                    "No speech was detected in the recording.",
+                    urgency="normal",
+                )
+        except Exception as exc:
+            print(f"[voice-hotkey] Transcription failed: {exc}", file=sys.stderr)
+            traceback.print_exc()
+            write_status("idle", hotkey=self.cfg.hotkey.key, last_error=str(exc))
+            send_desktop_notification_async(
+                "Voice Key",
+                f"Transcription failed: {exc}",
+                urgency="critical",
+            )
+            return
+
         write_status("idle", hotkey=self.cfg.hotkey.key)
 
     def _on_activate(self):

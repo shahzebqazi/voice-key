@@ -3,6 +3,8 @@
 import numpy as np
 import whisper
 
+from .transcript_log import compute_audio_hash, find_cached_transcript
+
 
 class Transcriber:
     """Thin wrapper around openai-whisper for local transcription."""
@@ -17,7 +19,13 @@ class Transcriber:
             print(f"[voice-hotkey] Loading Whisper model '{self.model_name}'...")
             self._model = whisper.load_model(self.model_name)
 
-    def transcribe(self, audio: np.ndarray, sample_rate: int = 16000) -> str:
+    def transcribe(self, audio: np.ndarray, sample_rate: int = 16000, audio_hash: str | None = None) -> str:
+        audio_hash = audio_hash or compute_audio_hash(audio, sample_rate)
+        cached_entry = find_cached_transcript(audio_hash)
+        if cached_entry:
+            print("[voice-hotkey] Reusing cached transcript from recent log queue.")
+            return str(cached_entry.get("raw_text") or cached_entry.get("text", "")).strip()
+
         self._ensure_model()
 
         audio_f32 = audio.astype(np.float32)

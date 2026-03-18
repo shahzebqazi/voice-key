@@ -69,3 +69,36 @@ class NotificationSound:
             sd.play(chime.astype(np.float32), sample_rate, blocking=False)
         except Exception:
             pass
+
+
+def send_desktop_notification(
+    title: str,
+    message: str,
+    urgency: str = "normal",
+    which=shutil.which,
+    run=subprocess.run,
+) -> bool:
+    """Send a desktop notification when a notification daemon is available."""
+    command = which("notify-send")
+    if not command:
+        return False
+
+    try:
+        run(
+            [command, "--urgency", urgency, title, message],
+            check=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        return True
+    except (FileNotFoundError, PermissionError, subprocess.SubprocessError):
+        return False
+
+
+def send_desktop_notification_async(title: str, message: str, urgency: str = "normal") -> None:
+    """Dispatch a desktop notification in the background."""
+    threading.Thread(
+        target=send_desktop_notification,
+        args=(title, message, urgency),
+        daemon=True,
+    ).start()
