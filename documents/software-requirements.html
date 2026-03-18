@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Software requirements — Voice Hotkey</title>
+    <link rel="stylesheet" href="doc-styles.css" />
+  </head>
+  <body>
+    <h1>Software requirements</h1>
+    <p class="meta">
+      <strong>Classification:</strong> Internal ·
+      <strong>Version:</strong> 1.0 ·
+      <strong>Audience:</strong> Engineering leadership ·
+      <strong>Primary focus:</strong> Platform, dependencies, security
+    </p>
+
+    <div class="callout">
+      Formal platform, security, and delivery requirements for the Voice Hotkey application.
+      Product context is in the <a href="executive-overview.html">Executive overview</a>;
+      UX detail is in the <a href="design-guide.html">Design guide</a>.
+    </div>
+
+    <h2>1. Platform requirements</h2>
+    <table>
+      <thead>
+        <tr><th>Requirement</th><th>Specification</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Operating system</td><td>Linux (kernel 5.x+)</td></tr>
+        <tr><td>Display server</td><td>X11 or Wayland with XWayland</td></tr>
+        <tr><td>Python</td><td>3.9 or later</td></tr>
+        <tr><td>Audio subsystem</td><td>PulseAudio or PipeWire (via PortAudio)</td></tr>
+        <tr><td>Clipboard</td><td><code>xclip</code>, <code>xsel</code>, or <code>wl-copy</code></td></tr>
+        <tr><td>FFmpeg</td><td>Required by Whisper for audio decoding</td></tr>
+      </tbody>
+    </table>
+
+    <h2>2. Python dependencies</h2>
+    <table>
+      <thead>
+        <tr><th>Package</th><th>Purpose</th><th>License</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>pynput</code></td><td>Global keyboard listener</td><td>LGPL-3.0</td></tr>
+        <tr><td><code>sounddevice</code></td><td>Audio capture via PortAudio</td><td>MIT</td></tr>
+        <tr><td><code>numpy</code></td><td>Audio buffer management</td><td>BSD</td></tr>
+        <tr><td><code>openai-whisper</code></td><td>Local speech-to-text</td><td>MIT</td></tr>
+        <tr><td><code>pyperclip</code></td><td>Cross-platform clipboard</td><td>BSD</td></tr>
+        <tr><td><code>tomli</code></td><td>TOML parsing (Python &lt; 3.11)</td><td>MIT</td></tr>
+      </tbody>
+    </table>
+
+    <h2>3. Security requirements</h2>
+    <ul>
+      <li><strong>No secrets in repository:</strong> API keys (if using cloud Whisper) must be in local config or environment variables. <code>.gitignore</code> excludes <code>config.toml</code> and <code>.env</code>.</li>
+      <li><strong>Audio privacy:</strong> Audio is recorded to memory only—not written to disk by default. Temporary WAV files, if created, are deleted after transcription.</li>
+      <li><strong>Permissions:</strong> Requires access to input devices (<code>/dev/input</code>) and audio devices. May need to be run with appropriate group membership (e.g. <code>input</code> group).</li>
+      <li><strong>Network:</strong> MVP uses local Whisper inference—no network access required. Cloud API mode (future) requires HTTPS to OpenAI API.</li>
+    </ul>
+
+    <h2>4. Configuration specification</h2>
+    <p>Config path: <code>~/.config/voice-hotkey/config.toml</code> (respects <code>$XDG_CONFIG_HOME</code>).</p>
+    <table>
+      <thead>
+        <tr><th>Section</th><th>Key</th><th>Type</th><th>Default</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>[hotkey]</code></td><td><code>key</code></td><td>string</td><td><code>"Key.ctrl_r"</code></td><td>pynput key name</td></tr>
+        <tr><td></td><td><code>double_click_ms</code></td><td>int</td><td><code>400</code></td><td>Max interval between taps</td></tr>
+        <tr><td><code>[recording]</code></td><td><code>sample_rate</code></td><td>int</td><td><code>16000</code></td><td>Samples per second</td></tr>
+        <tr><td></td><td><code>timeout_seconds</code></td><td>int</td><td><code>30</code></td><td>Auto-stop after N seconds</td></tr>
+        <tr><td><code>[whisper]</code></td><td><code>model</code></td><td>string</td><td><code>"base"</code></td><td>Whisper model size</td></tr>
+        <tr><td></td><td><code>language</code></td><td>string</td><td><code>"en"</code></td><td>Language or "auto"</td></tr>
+        <tr><td><code>[output]</code></td><td><code>target</code></td><td>string</td><td><code>"clipboard"</code></td><td>Output destination</td></tr>
+      </tbody>
+    </table>
+
+    <h2>5. Delivery</h2>
+    <ul>
+      <li><strong>Repository:</strong> <code>github.com/sqazi/voice-key</code></li>
+      <li><strong>Branch model:</strong> <code>main</code> — single branch for MVP.</li>
+      <li><strong>Installation:</strong> <code>pip install -r requirements.txt</code> in a virtual environment.</li>
+      <li><strong>Execution:</strong> <code>python -m app.main</code></li>
+      <li><strong>GitHub Pages:</strong> Static site at <code>https://sqazi.sh/voice-key/</code></li>
+    </ul>
+
+    <p class="doc-footer" style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+      Related:
+      <a href="executive-overview.html">Executive overview</a>
+      · <a href="design-guide.html">Design guide</a>
+    </p>
+    <a class="back" href="../index.html">← Back to Voice Hotkey</a>
+  </body>
+</html>

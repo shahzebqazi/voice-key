@@ -1,0 +1,1 @@
+"""Voice Hotkey application package."""

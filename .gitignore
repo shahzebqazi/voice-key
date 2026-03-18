@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+venv/
+.venv/
+
+# Whisper model cache
+*.pt
+
+# Audio recordings
+*.wav
+*.mp3
+*.ogg
+
+# Config with secrets
+config.toml
+*.env
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

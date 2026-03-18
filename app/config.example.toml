@@ -1,0 +1,14 @@
+[hotkey]
+key = "Key.ctrl_r"
+double_click_ms = 400
+
+[recording]
+sample_rate = 16000
+timeout_seconds = 30
+
+[whisper]
+model = "base"
+language = "en"
+
+[output]
+target = "clipboard"

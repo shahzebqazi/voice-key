@@ -1,0 +1,6 @@
+openai-whisper
+pynput
+sounddevice
+numpy
+pyperclip
+tomli; python_version < "3.11"

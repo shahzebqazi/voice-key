@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recording Flow — Voice Hotkey</title>
+    <link rel="stylesheet" href="mockup.css" />
+  </head>
+  <body>
+    <main class="mockup" aria-label="Recording flow mockup">
+      <div class="mockup__header">
+        <h1 class="mockup__title">Recording Flow</h1>
+        <p class="mockup__subtitle">Double-click → Record → Transcribe → Clipboard</p>
+      </div>
+
+      <div class="flow-steps" aria-label="Flow steps">
+        <div class="flow-step">
+          <span class="flow-step__number flow-step__number--done">1</span>
+          <div class="flow-step__content">
+            <p class="flow-step__title">Double-tap detected</p>
+            <p class="flow-step__desc">Right Control pressed twice within 400 ms</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <span class="flow-step__number flow-step__number--active">2</span>
+          <div class="flow-step__content">
+            <p class="flow-step__title">Recording in progress</p>
+            <p class="flow-step__desc">Capturing audio from default microphone</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <span class="flow-step__number">3</span>
+          <div class="flow-step__content">
+            <p class="flow-step__title">Transcribing</p>
+            <p class="flow-step__desc">Processing with Whisper (base model)</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <span class="flow-step__number">4</span>
+          <div class="flow-step__content">
+            <p class="flow-step__title">Output to clipboard</p>
+            <p class="flow-step__desc">Text copied, ready to paste</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="recording-indicator" aria-live="polite">
+        <div class="recording-indicator__dot" aria-hidden="true"></div>
+        <p class="recording-indicator__label">Recording</p>
+        <p class="recording-indicator__timer">00:04</p>
+        <p class="recording-indicator__hint">Double-tap Right Ctrl to stop · auto-stops at 30s</p>
+      </div>
+
+      <div class="result-card">
+        <p class="result-card__label">Transcription result</p>
+        <p class="result-card__text">
+          This is a sample transcription of spoken audio captured by the voice hotkey
+          application using the Whisper base model.
+        </p>
+        <div class="result-card__actions">
+          <button class="result-card__action result-card__action--primary" type="button">
+            Copy to clipboard
+          </button>
+          <button class="result-card__action" type="button">Discard</button>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

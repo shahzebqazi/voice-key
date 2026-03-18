@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Executive overview — Voice Hotkey</title>
+    <link rel="stylesheet" href="doc-styles.css" />
+  </head>
+  <body>
+    <h1>Executive overview</h1>
+    <p class="meta">
+      <strong>Classification:</strong> Internal ·
+      <strong>Version:</strong> 1.0 ·
+      <strong>Audience:</strong> Leadership, sponsors ·
+      <strong>Primary focus:</strong> Product &amp; architecture alignment
+    </p>
+
+    <div class="callout">
+      This is the <strong>main program document</strong> for the Voice Hotkey initiative.
+      It frames the product vision, architecture, and delivery model. Technical depth is in the
+      <a href="software-requirements.html">Software requirements</a>;
+      UX detail is in the <a href="design-guide.html">Design guide</a>.
+    </div>
+
+    <h2>1. Executive summary</h2>
+    <p>
+      Voice Hotkey is a <strong>Linux desktop application</strong> that binds a configurable
+      modifier key (default: Right Control) as a double-click trigger to record voice,
+      transcribe it locally using OpenAI Whisper, and copy the resulting text to the clipboard.
+      The MVP is a headless daemon—no GUI required.
+    </p>
+
+    <h2>2. Strategic objectives</h2>
+    <ol>
+      <li>Frictionless voice-to-text on Linux via a single keyboard gesture.</li>
+      <li>Local-first transcription: no cloud dependency in the default configuration.</li>
+      <li>Minimal footprint: background process, configurable via TOML file.</li>
+      <li>Extensible: future support for TTS, autocomplete, autocorrect, and multi-platform.</li>
+    </ol>
+
+    <h2>3. Architecture (executive view)</h2>
+    <table>
+      <thead>
+        <tr><th>Layer</th><th>Decision</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Language</td>
+          <td>Python 3.9+ — ecosystem maturity for audio, ML, and input capture.</td>
+        </tr>
+        <tr>
+          <td>Key capture</td>
+          <td><code>pynput</code> — global keyboard listener (X11/XWayland).</td>
+        </tr>
+        <tr>
+          <td>Audio</td>
+          <td><code>sounddevice</code> + <code>numpy</code> — real-time microphone capture.</td>
+        </tr>
+        <tr>
+          <td>Transcription</td>
+          <td><code>openai-whisper</code> — local inference, no API key required.</td>
+        </tr>
+        <tr>
+          <td>Output</td>
+          <td><code>pyperclip</code> → <code>xclip</code> / <code>wl-copy</code> — clipboard.</td>
+        </tr>
+        <tr>
+          <td>Config</td>
+          <td>TOML at <code>~/.config/voice-hotkey/config.toml</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>4. Governance</h2>
+    <ul>
+      <li><strong>Product</strong> owns feature scope, key-binding defaults, and UX.</li>
+      <li><strong>Engineering</strong> owns technical requirements, platform support, and security.</li>
+      <li><strong>Executive</strong> approves scope changes that imply new infrastructure or vendor commitments.</li>
+    </ul>
+
+    <h2>5. Investment &amp; risk</h2>
+    <ul>
+      <li><strong>Cost:</strong> Engineering time only; no cloud inference cost in default config.</li>
+      <li><strong>Key risk:</strong> Wayland compatibility for global key capture (mitigated by XWayland fallback).</li>
+      <li><strong>Dependency risk:</strong> Whisper model size vs. transcription quality trade-off (configurable).</li>
+    </ul>
+
+    <h2>6. Roadmap</h2>
+    <ol>
+      <li><strong>MVP:</strong> Right Control double-click → record → Whisper → clipboard.</li>
+      <li><strong>Phase 2:</strong> Configurable keys, model selection, language detection.</li>
+      <li><strong>Phase 3:</strong> TTS, autocomplete, autocorrect, active-window injection.</li>
+      <li><strong>Phase 4:</strong> Multi-platform support (Windows, macOS).</li>
+    </ol>
+
+    <p class="doc-footer" style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+      Related:
+      <a href="software-requirements.html">Software requirements</a>
+      · <a href="design-guide.html">Design guide</a>
+    </p>
+    <a class="back" href="../index.html">← Back to Voice Hotkey</a>
+  </body>
+</html>

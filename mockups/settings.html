@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings — Voice Hotkey</title>
+    <link rel="stylesheet" href="mockup.css" />
+  </head>
+  <body>
+    <main class="mockup" aria-label="Settings mockup">
+      <div class="mockup__header">
+        <h1 class="mockup__title">Settings</h1>
+        <p class="mockup__subtitle">Configure voice hotkey behavior</p>
+      </div>
+
+      <div class="mockup__section">
+        <p class="mockup__section-title">Hotkey</p>
+        <div class="mockup__row">
+          <span class="mockup__label">Trigger key</span>
+          <select class="mockup__select" aria-label="Trigger key">
+            <option selected>Right Control</option>
+            <option>Right Alt</option>
+            <option>Super / Windows</option>
+            <option>Copilot key</option>
+            <option>Fn</option>
+          </select>
+        </div>
+        <div class="mockup__row">
+          <span class="mockup__label">Double-click speed</span>
+          <span class="mockup__value">400 ms</span>
+        </div>
+        <div class="mockup__row">
+          <span class="mockup__label">Status</span>
+          <span class="mockup__badge mockup__badge--active">Listening</span>
+        </div>
+      </div>
+
+      <div class="mockup__section">
+        <p class="mockup__section-title">Recording</p>
+        <div class="mockup__row">
+          <span class="mockup__label">Sample rate</span>
+          <span class="mockup__value">16 000 Hz</span>
+        </div>
+        <div class="mockup__row">
+          <span class="mockup__label">Timeout</span>
+          <span class="mockup__value">30 seconds</span>
+        </div>
+      </div>
+
+      <div class="mockup__section">
+        <p class="mockup__section-title">Whisper</p>
+        <div class="mockup__row">
+          <span class="mockup__label">Model</span>
+          <select class="mockup__select" aria-label="Whisper model">
+            <option>tiny</option>
+            <option selected>base</option>
+            <option>small</option>
+            <option>medium</option>
+            <option>large</option>
+          </select>
+        </div>
+        <div class="mockup__row">
+          <span class="mockup__label">Language</span>
+          <select class="mockup__select" aria-label="Language">
+            <option selected>English</option>
+            <option>Auto-detect</option>
+            <option>Spanish</option>
+            <option>French</option>
+            <option>German</option>
+            <option>Japanese</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mockup__section">
+        <p class="mockup__section-title">Output</p>
+        <div class="mockup__row">
+          <span class="mockup__label">Target</span>
+          <select class="mockup__select" aria-label="Output target">
+            <option selected>Clipboard</option>
+            <option disabled>Active window (future)</option>
+            <option disabled>Buffer (future)</option>
+          </select>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

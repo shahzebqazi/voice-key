@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Design guide — Voice Hotkey</title>
+    <link rel="stylesheet" href="doc-styles.css" />
+  </head>
+  <body>
+    <h1>Design guide</h1>
+    <p class="meta">
+      <strong>Classification:</strong> Internal ·
+      <strong>Version:</strong> 1.0 ·
+      <strong>Audience:</strong> Product, design, engineering ·
+      <strong>Primary focus:</strong> UX, key bindings, wireframes
+    </p>
+
+    <div class="callout">
+      UX patterns and interaction design for the Voice Hotkey application.
+      Infrastructure context is in the <a href="executive-overview.html">Executive overview</a>;
+      technical requirements are in the <a href="software-requirements.html">Software requirements</a>.
+    </div>
+
+    <h2>1. Interaction model</h2>
+    <p>
+      Voice Hotkey uses a <strong>double-tap gesture</strong> on a modifier key to toggle recording.
+      This avoids accidental activation from single key presses while remaining fast to trigger.
+    </p>
+
+    <h3>1.1 Default flow</h3>
+    <ol>
+      <li><strong>Idle:</strong> Daemon listens for key events in the background.</li>
+      <li><strong>Double-tap Right Ctrl:</strong> Recording begins. Terminal prints status.</li>
+      <li><strong>Double-tap Right Ctrl again</strong> (or timeout at 30s): Recording stops.</li>
+      <li><strong>Transcription:</strong> Whisper processes the audio buffer.</li>
+      <li><strong>Output:</strong> Transcribed text is copied to the system clipboard.</li>
+    </ol>
+
+    <h3>1.2 Feedback (MVP)</h3>
+    <p>
+      MVP feedback is terminal-only: status messages printed to stdout. Future versions may
+      add desktop notifications, a system tray icon, or an overlay indicator.
+    </p>
+
+    <h2>2. Key binding design</h2>
+    <table>
+      <thead>
+        <tr><th>Key</th><th>pynput name</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Right Control</td><td><code>Key.ctrl_r</code></td><td>Default. Rarely used alone; low conflict risk.</td></tr>
+        <tr><td>Right Alt</td><td><code>Key.alt_r</code></td><td>May conflict with AltGr on some layouts.</td></tr>
+        <tr><td>Super / Windows</td><td><code>Key.cmd</code></td><td>Often captured by desktop environments.</td></tr>
+        <tr><td>Fn</td><td>Varies</td><td>Hardware-level; may not generate key events.</td></tr>
+        <tr><td>Copilot key</td><td>Varies</td><td>New hardware; keycode mapping may be needed.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>2.1 Double-click timing</h3>
+    <p>
+      Default interval: <strong>400 ms</strong>. This is consistent with typical OS double-click
+      speed settings. Configurable via <code>double_click_ms</code> in config.
+    </p>
+
+    <h2>3. Whisper model guidance</h2>
+    <table>
+      <thead>
+        <tr><th>Model</th><th>Parameters</th><th>Speed</th><th>Accuracy</th><th>RAM</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>tiny</td><td>39M</td><td>Fastest</td><td>Lower</td><td>~1 GB</td></tr>
+        <tr><td>base</td><td>74M</td><td>Fast</td><td>Good</td><td>~1 GB</td></tr>
+        <tr><td>small</td><td>244M</td><td>Moderate</td><td>Better</td><td>~2 GB</td></tr>
+        <tr><td>medium</td><td>769M</td><td>Slower</td><td>High</td><td>~5 GB</td></tr>
+        <tr><td>large</td><td>1550M</td><td>Slowest</td><td>Highest</td><td>~10 GB</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Recommendation: start with <strong>base</strong> for a balance of speed and accuracy.
+      Upgrade to <strong>small</strong> or <strong>medium</strong> if quality is insufficient.
+    </p>
+
+    <h2>4. Output targets</h2>
+    <ul>
+      <li><strong>Clipboard (MVP):</strong> Text is copied via <code>pyperclip</code>. User pastes with Ctrl+V.</li>
+      <li><strong>Active window (future):</strong> Type text directly into focused app via <code>xdotool type</code> or <code>wtype</code>.</li>
+      <li><strong>Buffer (future):</strong> Hold text in an internal buffer for review before committing.</li>
+    </ul>
+
+    <h2>5. Wireframe reference</h2>
+    <p>
+      See mockups in the <a href="../index.html">Voice Hotkey site</a>:
+    </p>
+    <ul>
+      <li><strong>Settings:</strong> Key binding selector, model picker, output target.</li>
+      <li><strong>Recording flow:</strong> Step-by-step flow from trigger to clipboard.</li>
+      <li><strong>Future features:</strong> TTS, autocomplete, autocorrect placeholders.</li>
+    </ul>
+
+    <p class="doc-footer" style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+      Related:
+      <a href="executive-overview.html">Executive overview</a>
+      · <a href="software-requirements.html">Software requirements</a>
+    </p>
+    <a class="back" href="../index.html">← Back to Voice Hotkey</a>
+  </body>
+</html>
