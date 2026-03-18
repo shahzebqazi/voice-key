@@ -15,6 +15,9 @@ venv/
 *.mp3
 *.ogg
 
+# Logs
+logs/
+
 # Config with secrets
 config.toml
 *.env
