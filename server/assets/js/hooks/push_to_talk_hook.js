@@ -18,8 +18,10 @@ const PushToTalkHook = {
       e.preventDefault()
       this.ptt.stopRecording()
       // Brief delay for final results from the speech API
-      setTimeout(() => {
-        this.pushEvent("stop_recording", { transcript: this.ptt.getTranscript() })
+      setTimeout(async () => {
+        const transcript = this.ptt.getTranscript()
+        const clipboard_status = await this.ptt.copyTranscript()
+        this.pushEvent("stop_recording", { transcript, clipboard_status })
       }, 300)
     }
 

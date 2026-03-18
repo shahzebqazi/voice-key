@@ -1,18 +1,33 @@
-# VoiceKey
+# Voice Key Phoenix Server
+
+LAN-accessible Phoenix LiveView server for the Voice Hotkey push-to-talk web UI.
+
+## Features
+
+- Mobile-first push-to-talk screen at `/`
+- Browser speech recognition while the button is held
+- Transcript shown on release
+- Browser clipboard copy on release, with a visible success/unavailable status
+
+## Development
 
 To start your Phoenix server:
 
-* Run `mix setup` to install and setup dependencies
-* Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+- Run `mix setup` to install and set up dependencies
+- Start the endpoint with `mix phx.server` or `iex -S mix phx.server`
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+By default the app runs on [`http://localhost:4000`](http://localhost:4000).
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+For LAN access in development, start it with:
 
-## Learn more
+```bash
+PHX_SERVER=true mix phx.server
+```
 
-* Official website: https://www.phoenixframework.org/
-* Guides: https://hexdocs.pm/phoenix/overview.html
-* Docs: https://hexdocs.pm/phoenix
-* Forum: https://elixirforum.com/c/phoenix-forum
-* Source: https://github.com/phoenixframework/phoenix
+## Client-side tests
+
+Run the push-to-talk JavaScript tests with:
+
+```bash
+node assets/js/push_to_talk_test.js
+```

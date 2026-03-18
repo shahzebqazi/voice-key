@@ -53,17 +53,17 @@ function assert(condition, message) {
   }
 }
 
-function test(name, fn) {
+async function test(name, fn) {
   results.push(`\n${name}`)
   try {
-    fn()
+    await fn()
   } catch (e) {
     failed++
     results.push(`  \u2717 Error: ${e.message}`)
   }
 }
 
-test("PushToTalk initializes with SpeechRecognition", () => {
+await test("PushToTalk initializes with SpeechRecognition", async () => {
   const { btn, display, status } = setup()
   window.SpeechRecognition = MockSpeechRecognition
   const ptt = new PushToTalk(btn, display, status)
@@ -72,7 +72,7 @@ test("PushToTalk initializes with SpeechRecognition", () => {
   delete window.SpeechRecognition
 })
 
-test("PushToTalk falls back to webkitSpeechRecognition", () => {
+await test("PushToTalk falls back to webkitSpeechRecognition", async () => {
   const { btn, display, status } = setup()
   window.webkitSpeechRecognition = MockSpeechRecognition
   const ptt = new PushToTalk(btn, display, status)
@@ -80,7 +80,7 @@ test("PushToTalk falls back to webkitSpeechRecognition", () => {
   delete window.webkitSpeechRecognition
 })
 
-test("PushToTalk handles missing SpeechRecognition gracefully", () => {
+await test("PushToTalk handles missing SpeechRecognition gracefully", async () => {
   const { btn, display, status } = setup()
   delete window.SpeechRecognition
   delete window.webkitSpeechRecognition
@@ -89,7 +89,7 @@ test("PushToTalk handles missing SpeechRecognition gracefully", () => {
   assert(ptt.isRecording === false, "still initializes without error")
 })
 
-test("startRecording sets recording state", () => {
+await test("startRecording sets recording state", async () => {
   const { btn, display, status } = setup()
   window.SpeechRecognition = MockSpeechRecognition
   const ptt = new PushToTalk(btn, display, status)
@@ -99,7 +99,7 @@ test("startRecording sets recording state", () => {
   delete window.SpeechRecognition
 })
 
-test("stopRecording clears recording state", () => {
+await test("stopRecording clears recording state", async () => {
   const { btn, display, status } = setup()
   window.SpeechRecognition = MockSpeechRecognition
   const ptt = new PushToTalk(btn, display, status)
@@ -110,7 +110,7 @@ test("stopRecording clears recording state", () => {
   delete window.SpeechRecognition
 })
 
-test("onresult handler updates transcript", () => {
+await test("onresult handler updates transcript", async () => {
   const { btn, display, status } = setup()
   window.SpeechRecognition = MockSpeechRecognition
   const ptt = new PushToTalk(btn, display, status)
@@ -125,7 +125,7 @@ test("onresult handler updates transcript", () => {
   delete window.SpeechRecognition
 })
 
-test("onresult handler updates DOM element", () => {
+await test("onresult handler updates DOM element", async () => {
   const { btn, display, status } = setup()
   window.SpeechRecognition = MockSpeechRecognition
   const ptt = new PushToTalk(btn, display, status)
@@ -140,7 +140,7 @@ test("onresult handler updates DOM element", () => {
   delete window.SpeechRecognition
 })
 
-test("getTranscript returns accumulated text", () => {
+await test("getTranscript returns accumulated text", async () => {
   const { btn, display, status } = setup()
   window.SpeechRecognition = MockSpeechRecognition
   const ptt = new PushToTalk(btn, display, status)
@@ -149,7 +149,7 @@ test("getTranscript returns accumulated text", () => {
   delete window.SpeechRecognition
 })
 
-test("startRecording clears previous transcript", () => {
+await test("startRecording clears previous transcript", async () => {
   const { btn, display, status } = setup()
   window.SpeechRecognition = MockSpeechRecognition
   const ptt = new PushToTalk(btn, display, status)
@@ -158,6 +158,39 @@ test("startRecording clears previous transcript", () => {
   assert(ptt.transcript === "", "transcript is cleared on new recording")
   assert(display.textContent === "", "DOM transcript element is cleared")
   delete window.SpeechRecognition
+})
+
+await test("copyTranscript writes to navigator clipboard when available", async () => {
+  const { btn, display, status } = setup()
+  const clipboard = { writeText: async (text) => { clipboard.last = text } }
+  const ptt = new PushToTalk(btn, display, status, clipboard)
+  ptt.transcript = "copy me"
+
+  const result = await ptt.copyTranscript()
+
+  assert(result === "copied", "returns copied when clipboard write succeeds")
+  assert(clipboard.last === "copy me", "writes transcript to clipboard")
+})
+
+await test("copyTranscript reports unavailable when clipboard is missing", async () => {
+  const { btn, display, status } = setup()
+  const ptt = new PushToTalk(btn, display, status, null)
+  ptt.transcript = "copy me"
+
+  const result = await ptt.copyTranscript()
+
+  assert(result === "unavailable", "returns unavailable without clipboard support")
+})
+
+await test("copyTranscript reports empty when transcript is blank", async () => {
+  const { btn, display, status } = setup()
+  const clipboard = { writeText: async () => {} }
+  const ptt = new PushToTalk(btn, display, status, clipboard)
+  ptt.transcript = "   "
+
+  const result = await ptt.copyTranscript()
+
+  assert(result === "empty", "returns empty when there is no transcript to copy")
 })
 
 console.log("\n=== Push-to-Talk JS Tests ===")

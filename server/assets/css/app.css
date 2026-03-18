@@ -171,6 +171,31 @@
   color: #8e8e93;
 }
 
+.ptt-copy-status {
+  margin: -0.5rem 1.5rem 0.75rem;
+  text-align: center;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.ptt-copy-status.success {
+  color: #1f7a38;
+}
+
+.ptt-copy-status.warning {
+  color: #a15c00;
+}
+
+@media (prefers-color-scheme: dark) {
+  .ptt-copy-status.success {
+    color: #5ae28b;
+  }
+
+  .ptt-copy-status.warning {
+    color: #ffbf69;
+  }
+}
+
 .ptt-button-area {
   display: flex;
   flex-direction: column;

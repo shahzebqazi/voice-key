@@ -6,19 +6,28 @@ defmodule VoiceKeyWeb.PushToTalkLive do
     {:ok,
      assign(socket,
        state: :idle,
-       transcript: ""
+       transcript: "",
+       clipboard_status: nil
      )}
   end
 
   @impl true
   def handle_event("start_recording", _params, socket) do
-    {:noreply, assign(socket, state: :recording, transcript: "")}
+    {:noreply, assign(socket, state: :recording, transcript: "", clipboard_status: nil)}
   end
 
   @impl true
-  def handle_event("stop_recording", %{"transcript" => transcript}, socket) do
+  def handle_event("stop_recording", params, socket) do
+    transcript = Map.get(params, "transcript", "")
+    clipboard_status = Map.get(params, "clipboard_status")
     new_state = if transcript == "", do: :idle, else: :done
-    {:noreply, assign(socket, state: new_state, transcript: transcript)}
+
+    {:noreply,
+     assign(socket,
+       state: new_state,
+       transcript: transcript,
+       clipboard_status: clipboard_status
+     )}
   end
 
   @impl true
@@ -35,6 +44,17 @@ defmodule VoiceKeyWeb.PushToTalkLive do
           Tap and hold to speak
         </p>
       </div>
+
+      <p :if={@clipboard_status == "copied"} id="clipboard-status" class="ptt-copy-status success">
+        Copied to clipboard
+      </p>
+      <p
+        :if={@clipboard_status == "unavailable" && @transcript != ""}
+        id="clipboard-status"
+        class="ptt-copy-status warning"
+      >
+        Clipboard unavailable on this browser
+      </p>
 
       <div class="ptt-button-area">
         <div id="status-text" class="ptt-status">

@@ -47,9 +47,14 @@ defmodule VoiceKeyWeb.PushToTalkLiveTest do
       {:ok, view, _html} = live(conn, "/")
 
       render_click(view, "start_recording")
-      html = render_click(view, "stop_recording", %{"transcript" => "hello world"})
+      html =
+        render_click(view, "stop_recording", %{
+          "transcript" => "hello world",
+          "clipboard_status" => "copied"
+        })
 
       assert html =~ "hello world"
+      assert html =~ "Copied to clipboard"
       refute html =~ "recording"
     end
 
@@ -71,6 +76,20 @@ defmodule VoiceKeyWeb.PushToTalkLiveTest do
       html = render_click(view, "stop_recording", %{"transcript" => ""})
 
       assert html =~ "Hold to Talk"
+    end
+
+    test "shows clipboard warning when browser copy is unavailable", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/")
+
+      render_click(view, "start_recording")
+
+      html =
+        render_click(view, "stop_recording", %{
+          "transcript" => "hello world",
+          "clipboard_status" => "unavailable"
+        })
+
+      assert html =~ "Clipboard unavailable on this browser"
     end
   end
 end
