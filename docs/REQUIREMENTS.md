@@ -91,4 +91,4 @@ See `app/config.example.toml` for the full schema. Config respects `$XDG_CONFIG_
 2. Whisper transcribes captured audio with reasonable accuracy
 3. Transcribed text appears in system clipboard within 5 seconds of stopping
 4. Application runs as a background daemon without GUI
-5. GitHub Pages shell uses a fixed black background with viewport controls only
+5. GitHub Pages shell uses a fixed black background with a horizontal expanding file-structure header

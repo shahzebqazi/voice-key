@@ -1,16 +1,18 @@
 # Menu inventory — Voice Hotkey
 
-Shell sections and mockup inventory for the GitHub Pages site.
+Shell header structure and mockup inventory for the GitHub Pages site.
 
 ---
 
-## Shell sections (`index.html`)
+## Header menu (`index.html`)
 
-| Section | Disclosure ID | Content |
-|---------|--------------|---------|
-| Viewport | `disclosure-viewport` | Viewport size controls (Phone, Desktop) |
-| Mockups | `disclosure-mockups` | Settings, Recording Flow, Future Features |
-| Documents | `disclosure-docs` | Executive overview, Software requirements, Design guide |
+| Folder | Control | Content |
+|--------|---------|---------|
+| `viewport/` | `data-menu-target="panel-viewport"` | Viewport size controls (Phone, Desktop) |
+| `mockups/` | `data-menu-target="panel-mockups"` | Settings, Recording Flow, Future Features |
+| `documents/` | `data-menu-target="panel-documents"` | Executive overview, Software requirements, Design guide |
+
+The header uses a horizontal file-structure bar. Clicking a folder expands its panel below the bar, and clicking it again contracts the panel.
 
 ---
 
