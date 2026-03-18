@@ -23,6 +23,8 @@ class AppRoutesTest {
 
         assertEquals(HttpStatusCode.OK, response.status)
         assertTrue(response.bodyAsText().contains("Hello World"))
+        assertTrue(response.bodyAsText().contains("signal-button"))
+        assertTrue(response.bodyAsText().contains("Action Button"))
     }
 
     @Test
@@ -38,6 +40,18 @@ class AppRoutesTest {
 
         assertEquals(HttpStatusCode.OK, response.status)
         assertTrue(response.bodyAsText().contains("Button Clicked"))
+    }
+
+    @Test
+    fun `signal status endpoint reports ready state`() = testApplication {
+        application {
+            voiceKeyModule()
+        }
+
+        val response = client.get("/signal")
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertTrue(response.bodyAsText().contains("ready"))
     }
 
     @Test

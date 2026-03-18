@@ -5,7 +5,7 @@ class SignalService(
 ) {
     fun record(message: String): String {
         val trimmed = message.trim().ifBlank { "Button Clicked" }
-        log("[Device Signal]: $trimmed")
+        log("[Device Signal]: Message Received from Android Client")
         return trimmed
     }
 }

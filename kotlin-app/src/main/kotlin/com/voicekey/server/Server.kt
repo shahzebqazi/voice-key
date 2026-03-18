@@ -25,6 +25,10 @@ import kotlinx.html.title
 import kotlinx.html.unsafe
 
 fun main() {
+    val lanAddress = LanAddressResolver.firstIpv4Address() ?: "localhost"
+    println("[Server] Local URL: http://localhost:${ServerSettings.port}")
+    println("[Server] LAN URL: http://$lanAddress:${ServerSettings.port}")
+
     embeddedServer(
         factory = Netty,
         host = ServerSettings.host,
@@ -91,6 +95,13 @@ fun Application.voiceKeyModule() {
             val recorded = signalService.record(message)
             call.respondText(
                 text = """{"status":"ok","message":"$recorded"}""",
+                contentType = ContentType.Application.Json
+            )
+        }
+
+        get("/signal") {
+            call.respondText(
+                text = """{"status":"ready"}""",
                 contentType = ContentType.Application.Json
             )
         }
