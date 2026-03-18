@@ -4,6 +4,39 @@ Linux desktop application that binds a modifier key (default: **Right Control**)
 
 **Live site:** [https://sqazi.sh/voice-key/](https://sqazi.sh/voice-key/)
 
+## Cross-Device Communication Portfolio
+
+This repository now also contains a Kotlin proof of concept for local-network
+communication with an Android browser client.
+
+- Kotlin app path: `kotlin-app/`
+- Server stack: Ktor + Netty
+- Default bind: `0.0.0.0:8080`
+- Android discovery: `adb devices` plus `_kdeconnect._udp` fallback
+
+### Kotlin quick start
+
+```bash
+cd kotlin-app
+export JAVA_HOME="$HOME/.local/jdks/jdk-21.0.10+7"
+export PATH="$JAVA_HOME/bin:$PATH"
+
+./gradlew test
+./gradlew detectAndroid
+./gradlew run
+```
+
+When the server starts it prints both:
+
+- `http://localhost:8080`
+- `http://<lan-ip>:8080`
+
+Open the LAN URL in an Android browser and tap the action button to trigger:
+
+```text
+[Device Signal]: Message Received from Android Client
+```
+
 ## Quick start
 
 ```bash
@@ -85,6 +118,7 @@ target = "clipboard"        # clipboard (only option for MVP)
 
 ```
 voice-key/
+├── kotlin-app/              # Kotlin/Ktor cross-device proof of concept
 ├── app/                    # Application source
 │   ├── main.py             # Entry point
 │   ├── hotkey.py           # Double-click key listener
