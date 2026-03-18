@@ -7,6 +7,14 @@
 - Backend stack in progress: Kotlin + Ktor
 - Discovery status: local Android phone detected via `_kdeconnect._udp`
 
+## Phase 2 Status
+
+- Milestone: Kotlin server bootstrap
+- Bind address: `0.0.0.0:8080`
+- Endpoint 1: `GET /` returns a Hello World page
+- Endpoint 2: `POST /signal` accepts a client message and returns JSON
+- Manual verification: local GET and POST requests passed against the running Ktor app
+
 ## Current Proof Of Concept
 
 The Kotlin discovery utility in the main application branch checks for Android
