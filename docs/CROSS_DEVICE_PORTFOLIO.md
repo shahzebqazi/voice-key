@@ -15,6 +15,14 @@
 - Endpoint 2: `POST /signal` accepts a client message and returns JSON
 - Manual verification: local GET and POST requests passed against the running Ktor app
 
+## Phase 3 Status
+
+- Milestone: Android browser interaction flow
+- CLI output: startup now prints both localhost and LAN URLs
+- UI state: root page includes a large action button for the Android browser
+- Server signal log: `[Device Signal]: Message Received from Android Client`
+- Endpoint status: `GET /signal` reports readiness for client checks
+
 ## Current Proof Of Concept
 
 The Kotlin discovery utility in the main application branch checks for Android
