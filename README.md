@@ -4,6 +4,16 @@ Linux desktop application that binds a modifier key (default: **Right Control**)
 
 **Live site:** [https://sqazi.sh/voice-key/](https://sqazi.sh/voice-key/)
 
+## Cross-Device Communication Portfolio
+
+This branch also tracks a Kotlin/Ktor proof of concept for LAN communication
+with an Android browser client.
+
+- Kotlin app path: `kotlin-app/`
+- Server bind: `0.0.0.0:8080`
+- Android discovery: `adb devices` plus `_kdeconnect._udp`
+- Server log target: `[Device Signal]: Message Received from Android Client`
+
 ## Quick start
 
 ```bash

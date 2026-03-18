@@ -33,3 +33,9 @@ presence using:
 
 This portfolio branch will be expanded with architecture notes, UI mock-ups,
 and milestone summaries as the Kotlin server proof of concept grows.
+
+## Included artifacts
+
+- `CROSS_DEVICE_OVERVIEW.md`
+- `CROSS_DEVICE_ARCHITECTURE.md`
+- `CROSS_DEVICE_MOCKUPS.md`
